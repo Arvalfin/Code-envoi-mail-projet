@@ -31,3 +31,5 @@ serveur_smtp.send_message(message)
 
 # Fermer la connexion
 serveur_smtp.quit()
+
+#On peut créer une fonction avec ça en mettant en argument une liste qui comprend [expéditeur, destinataire, info du match]
