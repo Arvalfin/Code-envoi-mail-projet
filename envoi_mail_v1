@@ -1,35 +1,39 @@
+Created on Thu Mar 28 13:03:29 2024
+
+@author: adrie
+"""
+
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Paramètres de l'expéditeur
+def envoyer_email(expediteur_email, destinataire_email, sujet, corps_message):
+    # Créer le message
+    message = MIMEMultipart()
+    message['From'] = expediteur_email
+    message['To'] = destinataire_email
+    message['Subject'] = sujet
+    message.attach(MIMEText(corps_message, 'plain'))
+
+    # Établir une connexion avec le serveur SMTP de Laposte
+    serveur_smtp = smtplib.SMTP('smtp.laposte.net', 587)
+    serveur_smtp.starttls()
+
+    # Se connecter au compte expéditeur
+    serveur_smtp.login(expediteur_email, "Nouveaumotdep@sse2024")
+
+    # Envoyer l'e-mail
+    serveur_smtp.send_message(message)
+
+    # Fermer la connexion
+    serveur_smtp.quit()
+
+# Utilisation de la fonction pour envoyer un e-mail
 expediteur_email = "pythontesting@laposte.net"
-expediteur_mot_de_passe = "Nouveaumotdep@sse2024"
 
-# Paramètres du destinataire
 destinataire_email = "adrien.bolmont@etu.unistra.fr"
-
-# Créer le message
 sujet = "Message pour Steph"
 corps_message = "Bonjour, Ceci est le message que je devais t'envoyer"
 
-message = MIMEMultipart()
-message['From'] = expediteur_email
-message['To'] = destinataire_email
-message['Subject'] = sujet
-message.attach(MIMEText(corps_message, 'plain'))
+envoyer_email(expediteur_email, destinataire_email, sujet, corps_message)
 
-# Établir une connexion avec le serveur SMTP de Gmail
-serveur_smtp = smtplib.SMTP('smtp.laposte.net', 587)
-serveur_smtp.starttls()
-
-# Se connecter au compte expéditeur
-serveur_smtp.login(expediteur_email, expediteur_mot_de_passe)
-
-# Envoyer l'e-mail
-serveur_smtp.send_message(message)
-
-# Fermer la connexion
-serveur_smtp.quit()
-
-#On peut créer une fonction avec ça en mettant en argument une liste qui comprend [expéditeur, destinataire, info du match]
