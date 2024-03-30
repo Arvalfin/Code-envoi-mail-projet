@@ -4,6 +4,7 @@ Created on Fri Mar 29 17:31:54 2024
 
 @author: adrie
 """
+
 import datetime
 import smtplib
 from email.mime.text import MIMEText
@@ -44,34 +45,31 @@ def sujet_mail(phrase_fixe):
     # Afficher la phrase fixe suivie de la date du jour
     return phrase_fixe + " " + date_du_jour
 # Exemple d'utilisation de la fonction
-sujet_mail("Vos prévisions pour la semaine du")
+#sujet_mail("Vos prévisions pour la semaine du")
 
 # envoie de mail code 
-def envoyer_email(destinataire_email,corps_message):
+def envoyer_email(destinataire_email, corps_mail):
     # Créer le message
-    
     message = MIMEMultipart()
     expediteur_email = "pythontesting@laposte.net"
     message['From'] = expediteur_email
     message['To'] = destinataire_email
     message['Subject'] = sujet_mail(" Vos prévisions pour la semaine du")
-    message.attach(MIMEText(corps_message, 'plain'))
+    message.attach(MIMEText(corps_mail, 'plain'))  # Utilisation de corps_mail au lieu de corps_message
     # Établir une connexion avec le serveur SMTP de Laposte
     serveur_smtp = smtplib.SMTP('smtp.laposte.net', 587)
     serveur_smtp.starttls()
-    
     # Se connecter au compte expéditeur
     serveur_smtp.login(expediteur_email, "Nouveaumotdep@sse2024")
-
     # Envoyer l'e-mail
     serveur_smtp.send_message(message)
-
     # Fermer la connexion
     serveur_smtp.quit()
 
+###
 # Utilisation de la fonction pour envoyer un e-mail
-envoyer_email(destinataire_email)
-
+#envoyer_email(destinataire_email,corps_message)
+###
 
 
 ##  Fonction finale de l'envoi de mail en fonction des matchs scrapés, et de la personne. ####
