@@ -11,8 +11,8 @@ from email.mime.multipart import MIMEMultipart
 import pandas as pd
 from datetime import datetime
 
-
-
+# Données expéditeurs
+destinataire_email = "adrien.bolmont@etu.unistra.fr"
 # Données des utilisateurs
 donnees_utilisateurs = {
     'name': ['Dupont', 'Durand', 'Tremblay'],
@@ -26,32 +26,27 @@ data_match = {
     }
 
 
-# Création du DataFrame
+# Création du DataFrame de data user et matchs
 df_user_data = pd.DataFrame(donnees_utilisateurs)
 df_match_data =pd.DataFrame(data_match)
 
 
 #Fonction qui définit le type de user : 0 = pas équipe pref, 1 equipe pref
-
 def type_finder(df_user_data, df_match_data):
     for team in df_match_data.values.flatten():
         df_user_data['TYPE'] = df_user_data['Club'].isin(df_match_data.values.flatten()).astype(int)
 type_finder(df_user_data, df_match_data)
 
-
-
 #construction de l'objet du mail avec la date du jour
 def sujet_mail(phrase_fixe):
     # Obtenir la date actuelle
     date_du_jour = datetime.now().strftime('%d-%m-%Y')  # Format YYYY-MM-DD
-
     # Afficher la phrase fixe suivie de la date du jour
     return phrase_fixe + " " + date_du_jour
-
 # Exemple d'utilisation de la fonction
 sujet_mail("Vos prévisions pour la semaine du")
 
-# envoie de mail en fonction du type 
+# envoie de mail code 
 def envoyer_email(destinataire_email,corps_message):
     # Créer le message
     
@@ -75,20 +70,32 @@ def envoyer_email(destinataire_email,corps_message):
     serveur_smtp.quit()
 
 # Utilisation de la fonction pour envoyer un e-mail
-destinataire_email = "adrien.bolmont@etu.unistra.fr"
 envoyer_email(destinataire_email)
 
-def corps_mail(df_user_data):
-    #creation colonne du type de joueur
-    type_finder(df_user_data, df_match_data)
-    #Creation de 2 variables de corps de base. 
-    corps_type_0 = "Bonjour, voici la liste des matchs que nous avons trouvé intéressants pour vous. Bonne semaine, salutations footbalistiques. "
-    corps_type_1 = "Bonjour, voici la liste des matchs de la semaines. Notez que votre équipe favorite joue. Salutations footbalistiques."
+
+
+##  Fonction finale de l'envoi de mail en fonction des matchs scrapés, et de la personne. ####
+def corps_mail(df_user_data, df_match_data):
+    # Creation de la colonne du type de joueur
+    type_finder(df_user_data, df_match_data) 
+    
+    # Creation de 2 variables de corps de base
+    corps_type_0_base = "Bonjour, voici la liste des matchs que nous avons trouvé intéressants pour vous : \n\n"
+    corps_type_1_base = "Bonjour, voici la liste des matchs de la semaine : \n\n"
+
+    # Convertion de df_match_data en une chaîne de caractères formatés
+    matchs_str = df_match_data.to_string(index=False)
+    
     for index, row in df_user_data.iterrows():
         destinataire_email = row['mail']
-        if row['TYPE'] == 1:
+        
+        corps_type_0 = corps_type_0_base + matchs_str + "\n\nBonne semaine. \nSalutations footbalistiques."
+        corps_type_1 = corps_type_1_base + matchs_str + "\n\nNotez que votre équipe favorite joue. \nSalutations footbalistiques."
+
+        if row['TYPE'] == 1: #affectation d'un corps de mail selon le type de parieur (0 ou 1)
             envoyer_email(destinataire_email, corps_type_1)
         else:
             envoyer_email(destinataire_email, corps_type_0)
 
-corps_mail(df_user_data)
+#Fonction finale de l'envoi de mail en fonction des matchs scrapés, et de la personne. 
+corps_mail(df_user_data, df_match_data)
