@@ -23,7 +23,8 @@ donnees_utilisateurs = {
 }
 data_match = {
     'team_1': ['Real Madrid', 'Paris','Lyon'],
-    'team_2': ['Sochaux', 'Liverpool','Strasbourg']
+    'team_2': ['Sochaux', 'Liverpool','Strasbourg'],
+    'classico': ['FALSE','TRUE','FASLE'],
     }
 
 
@@ -82,7 +83,7 @@ def corps_mail(df_user_data, df_match_data):
     corps_type_1_base = "Bonjour, voici la liste des matchs de la semaine : \n\n"
 
     # Convertion de df_match_data en une chaîne de caractères formatés
-    matchs_str = df_match_data.to_string(index=False)
+    matchs_str = df_match_data.iloc[:, :2].to_string(index=False)
     
     for index, row in df_user_data.iterrows():
         destinataire_email = row['mail']
